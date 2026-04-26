@@ -1,0 +1,6 @@
+{
+  "name": "BlueSync Audio Manager",
+  "description": "Professional Linux Bluetooth audio management dashboard. Easily combine multiple Bluetooth headphones into a single synchronized output using PipeWire and PulseAudio.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
