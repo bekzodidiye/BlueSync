@@ -317,11 +317,13 @@ export default function App() {
                       initial={{ opacity: 0, scale: 0.98 }}
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.95 }}
-                      onClick={() => toggleDevice(device.id)}
-                      className={`bg-[#151619] p-5 rounded-2xl flex flex-col gap-4 relative overflow-hidden transition-all duration-300 group cursor-pointer border-2 ${
-                        selectedIds.includes(device.id)
-                          ? 'border-blue-600 bg-blue-600/5 shadow-[0_0_20px_rgba(37,99,235,0.1)]'
-                          : 'border-[#2C2E33] hover:border-neutral-700'
+                      onClick={() => device.status === 'connected' && toggleDevice(device.id)}
+                      className={`bg-[#151619] p-5 rounded-2xl flex flex-col gap-4 relative overflow-hidden transition-all duration-300 group border-2 ${
+                        device.status !== 'connected' 
+                          ? 'opacity-40 grayscale cursor-not-allowed border-[#2C2E33]'
+                          : selectedIds.includes(device.id)
+                            ? 'border-blue-600 bg-blue-600/5 shadow-[0_0_20px_rgba(37,99,235,0.1)] cursor-pointer'
+                            : 'border-[#2C2E33] hover:border-neutral-700 cursor-pointer'
                       }`}
                     >
                       <div className="absolute top-0 right-0 w-12 h-12 bg-blue-600/5 rounded-bl-3xl flex items-center justify-center">

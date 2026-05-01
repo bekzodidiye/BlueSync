@@ -31,13 +31,12 @@ export async function requestBluetoothDevice(): Promise<Device | null> {
 
     if (!device) return null;
 
-    let isConnected = false;
-    let profileName = 'Bluetooth LE';
+    // Foydalanuvchi brauzer dialogdan qurilmani tanladi = qurilma "connected"
+    let profileName = 'Bluetooth Audio';
     
+    // GATT orqali qo'shimcha ma'lumot olishga harakat qilamiz (ixtiyoriy)
     try {
       const server = await device.gatt?.connect();
-      isConnected = true;
-
       try {
         const deviceInfoService = await server?.getPrimaryService('device_information');
         const modelChar = await deviceInfoService?.getCharacteristic('model_number_string');
@@ -45,18 +44,20 @@ export async function requestBluetoothDevice(): Promise<Device | null> {
         if (modelValue) {
           profileName = new TextDecoder().decode(modelValue);
         }
-      } catch (e) {}
+      } catch (e) {
+        // Model ma'lumoti yo'q — normal holat
+      }
     } catch (e) {
-      isConnected = false;
+      // Klassik BT qurilmalari (naushnik, kalonka) GATT ni qo'llamaydi — bu normal
     }
 
     const newDevice: Device = {
       id: `web_bt_${device.id || Date.now()}`,
       name: device.name || 'Noma\'lum Qurilma',
-      status: isConnected ? 'connected' : 'disconnected',
+      status: 'connected',
       profile: profileName,
-      sink: null,
-      active: isConnected,
+      sink: `web_sink_${device.id || Date.now()}`,
+      active: true,
       type: 'sink',
       volume: 85,
       latency_ms: 0,
