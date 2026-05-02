@@ -1,5 +1,7 @@
 import express from "express";
 import path from "path";
+import os from "os";
+import cors from "cors";
 import { createServer as createViteServer } from "vite";
 import { BluetoothService, AudioService } from "./src/server/services";
 
@@ -7,6 +9,7 @@ async function startServer() {
   const app = express();
   const PORT = 3000;
 
+  app.use(cors()); // Barcha qurilmalardan so'rovlarni qabul qilish
   app.use(express.json());
 
   // ============= BLUETOOTH API =============
@@ -213,8 +216,24 @@ async function startServer() {
   }
 
   app.listen(PORT, "0.0.0.0", () => {
-    console.log(`BlueSync Manager running on http://localhost:${PORT}`);
-    console.log(`Mode: Server-side Bluetooth (bluetoothctl + pactl)`);
+    // Tarmoqdagi IP manzilini aniqlash
+    const interfaces = os.networkInterfaces();
+    let networkIp = "localhost";
+    
+    for (const name of Object.keys(interfaces)) {
+      for (const iface of interfaces[name]!) {
+        if (iface.family === "IPv4" && !iface.internal) {
+          networkIp = iface.address;
+        }
+      }
+    }
+
+    console.log(`\n🚀 BlueSync Manager ishga tushdi!`);
+    console.log(`-------------------------------------------`);
+    console.log(`Local:   http://localhost:${PORT}`);
+    console.log(`Network: http://${networkIp}:${PORT}  <-- Telefoningizdan shu manzilga kiring!`);
+    console.log(`-------------------------------------------`);
+    console.log(`Rejim:   Server-side Bluetooth (Multi-device enabled)\n`);
   });
 }
 
